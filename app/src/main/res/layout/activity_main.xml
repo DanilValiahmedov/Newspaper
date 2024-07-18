@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:src="@drawable/logo"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.2"
+                android:backgroundTint="@color/white"
+                android:text="The Main News"
+                android:textColor="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/world"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/world"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.2"
+                android:backgroundTint="@color/worldNews"
+                android:text="World News"
+                android:textColor="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/us"
+                app:layout_constraintStart_toEndOf="@+id/home"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/us"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.2"
+                android:backgroundTint="@color/usNews"
+                android:text="U.S. News"
+                android:textColor="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/arts"
+                app:layout_constraintStart_toEndOf="@+id/world"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/arts"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.2"
+                android:backgroundTint="@color/artNews"
+                android:text="Art News"
+                android:textColor="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/science"
+                app:layout_constraintStart_toEndOf="@+id/us"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/science"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.2"
+                android:backgroundTint="@color/scienceNews"
+                android:text="Science News"
+                android:textColor="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/arts"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:paddingBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView">
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

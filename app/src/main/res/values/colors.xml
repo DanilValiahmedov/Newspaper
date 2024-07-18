@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="worldNews">#C8F3BF</color>
+    <color name="usNews">#F3EEBF</color>
+    <color name="artNews">#BFF1F3</color>
+    <color name="scienceNews">#F3BFC1</color>
+    <color name="authors">#5A5A5A</color>
+    <color name="learn">#003EF8</color>
+    <color name="learnOnClick">#5A0597</color>
+</resources>
