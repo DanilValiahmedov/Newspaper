@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,19 +31,10 @@ import java.lang.reflect.InvocationTargetException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-val retrofit = Retrofit.Builder().baseUrl("https://api.nytimes.com/svc/topstories/v2/")
-    .addConverterFactory(GsonConverterFactory.create()).build()
-val newsApi = retrofit.create(NewsAPI::class.java)
-
-object A {
-
-}
-
 class MainActivity : AppCompatActivity() {
 
+    lateinit var viewModel: NewsViewModel
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var newsList: ArrayList<RecyclerNews>
 
     private  lateinit var  binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,131 +42,32 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-
-        recyclerView = binding.recycleView
+        val recyclerView = binding.recycleView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        newsList = arrayListOf()
 
-        var backColor = sharedPref.getInt("backColor",R.color.white)
-        var color = sharedPref.getInt("color", ContextCompat.getColor(this@MainActivity, R.color.white))
-        var section = sharedPref.getString("section", "home")
-
-        binding.main.setBackgroundResource(backColor)
-        setUpNews(section!!, color)
+        viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
+        viewModel.liveData.observe(this, { newsList ->
+            recyclerView.adapter = AdapterNews(this@MainActivity, newsList)
+        })
+        viewModel.backgroundColorLiveData.observe(this, { color ->
+            binding.main.setBackgroundColor(color)
+        })
 
         binding.home.setOnClickListener {
-            newsList = arrayListOf()
-            backColor = R.color.white
-            color = ContextCompat.getColor(this@MainActivity, R.color.white)
-            section = "home"
-            editor.apply {
-                putInt("backColor", backColor)
-                putInt("color", color)
-                putString("section", section)
-                apply()
-            }
-            binding.main.setBackgroundResource(backColor)
-            setUpNews(section!!, R.color.white)
+            viewModel.setUpNews("home", ContextCompat.getColor(this@MainActivity, R.color.white))
         }
         binding.world.setOnClickListener {
-            newsList = arrayListOf()
-            backColor = R.color.worldNews
-            color = ContextCompat.getColor(this@MainActivity, R.color.worldNews)
-            section = "world"
-            editor.apply {
-                putInt("backColor", backColor)
-                putInt("color", color)
-                putString("section", section)
-                apply()
-            }
-            binding.main.setBackgroundResource(backColor)
-            setUpNews(section!!, color)
+            viewModel.setUpNews("world", ContextCompat.getColor(this@MainActivity, R.color.worldNews))
         }
         binding.us.setOnClickListener {
-            newsList = arrayListOf()
-            backColor = R.color.usNews
-            color = ContextCompat.getColor(this@MainActivity, R.color.usNews)
-            section = "us"
-            editor.apply {
-                putInt("backColor", backColor)
-                putInt("color", color)
-                putString("section", section)
-                apply()
-            }
-            binding.main.setBackgroundResource(backColor)
-            setUpNews(section!!, color)
+            viewModel.setUpNews("us", ContextCompat.getColor(this@MainActivity, R.color.usNews))
         }
         binding.arts.setOnClickListener {
-            newsList = arrayListOf()
-            backColor = R.color.artNews
-            color = ContextCompat.getColor(this@MainActivity, R.color.artNews)
-            section = "arts"
-            editor.apply {
-                putInt("backColor", backColor)
-                putInt("color", color)
-                putString("section", section)
-                apply()
-            }
-            binding.main.setBackgroundResource(backColor)
-            setUpNews(section!!, color)
+            viewModel.setUpNews("arts", ContextCompat.getColor(this@MainActivity, R.color.artNews))
         }
         binding.science.setOnClickListener {
-            newsList = arrayListOf()
-            backColor = R.color.scienceNews
-            color = ContextCompat.getColor(this@MainActivity, R.color.scienceNews)
-            section = "science"
-            editor.apply {
-                putInt("backColor", backColor)
-                putInt("color", color)
-                putString("section", section)
-                apply()
-            }
-            binding.main.setBackgroundResource(backColor)
-            setUpNews(section!!, color)
+            viewModel.setUpNews("science", ContextCompat.getColor(this@MainActivity, R.color.scienceNews))
         }
-    }
 
-
-
-    private fun setUpNews (section: String, color: Int) {
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val news = newsApi.getNewsBySection(section)
-                runOnUiThread {
-                    for (i in 0 until news.num_results) {
-                        try {
-                            val titleNews = news.results[i].title
-                            val byNews = news.results[i].byline
-                            val abstractNews = news.results[i].abstract
-                            var urlNews = news.results[i].url
-                            val urlImage = news.results[i].multimedia[1].url
-                            if (news.results[i].url == "null") {
-                                urlNews = "https://www.nytimes.com/"
-                            }
-                            newsList.add(RecyclerNews(titleNews, byNews, abstractNews, urlImage, color, urlNews))
-                        } catch (e: Exception) {
-                            val titleNews = "Technical problems"
-                            val byNews = "Technical problems"
-                            val abstractNews = "Sorry, this news could not load due to technical problems"
-                            val urlNews = "https://www.nytimes.com/"
-                            val urlImage = "https://media.licdn.com/dms/image/C5112AQHF774FQQlF3Q/article-cover_image-shrink_600_2000/0/1520111068550?e=2147483647&v=beta&t=ZB0WgXtvphu_-GENI__W1YAChf32k5VDJhBYGbCd00A"
-                            newsList.add(RecyclerNews(titleNews, byNews, abstractNews, urlImage, color, urlNews))
-                        }
-                    }
-                    recyclerView.adapter = AdapterNews(this@MainActivity, newsList)
-                }
-            }  catch(e: UnknownHostException){
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Соединение с сетью отсуствует", Toast.LENGTH_LONG).show()
-                }
-            } catch(e: Exception){
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Отправлено множество запросов в сеть. Пожалуйста подождите или перезапустите приложение", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
     }
 }
