@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Newspaper</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="empty_news_error">Новости не найдены</string>
 </resources>

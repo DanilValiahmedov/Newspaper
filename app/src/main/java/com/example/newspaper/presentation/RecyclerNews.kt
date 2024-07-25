@@ -1,6 +1,4 @@
-package com.example.newspaper
-
-import android.widget.ImageView
+package com.example.newspaper.presentation
 
 data class RecyclerNews(
     val titleNews: String,

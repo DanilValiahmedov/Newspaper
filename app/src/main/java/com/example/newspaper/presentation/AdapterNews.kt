@@ -1,4 +1,4 @@
-package com.example.newspaper
+package com.example.newspaper.presentation
 
 import android.content.Context
 import android.content.Intent
@@ -9,10 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.newspaper.R
 
 class AdapterNews(private val context: Context): RecyclerView.Adapter<AdapterNews.NewsViewHolder>() {
 

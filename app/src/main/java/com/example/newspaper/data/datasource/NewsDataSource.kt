@@ -1,13 +1,13 @@
 package com.example.newspaper.data.datasource
 
 import com.example.newspaper.data.Network
-import com.example.newspaper.data.model.News
+import com.example.newspaper.data.model.NewsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 object NewsDataSource {
-    suspend fun getNewsList(section: String): Result<News> = request {
+    suspend fun getNewsList(section: String): Result<NewsResponse> = request {
         Network.newsApi.getNewsBySection(section)
     }
 
