@@ -1,4 +1,4 @@
-package com.example.newspaper
+package com.example.newspaper.data.model
 
 import kotlinx.serialization.Serializable
 

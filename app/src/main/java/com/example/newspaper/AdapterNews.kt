@@ -14,7 +14,15 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class AdapterNews(private val context: Context,private val newsList: List<RecyclerNews>): RecyclerView.Adapter<AdapterNews.NewsViewHolder>() {
+class AdapterNews(private val context: Context): RecyclerView.Adapter<AdapterNews.NewsViewHolder>() {
+
+    private val newsList: MutableList<RecyclerNews> = mutableListOf()
+
+    fun setNewList(list: List<RecyclerNews>) {
+        newsList.clear()
+        newsList.addAll(list)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view, parent, false)

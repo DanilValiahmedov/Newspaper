@@ -10,10 +10,9 @@ import com.example.newspaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel: NewsViewModel
-
-
+    private val viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
     private  lateinit var  binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -21,14 +20,14 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView = binding.recycleView
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
-        viewModel.liveData.observe(this, { newsList ->
-            recyclerView.adapter = AdapterNews(this@MainActivity, newsList)
-        })
-        viewModel.backgroundColorLiveData.observe(this, { color ->
+        val adapter = AdapterNews(this@MainActivity,)
+        recyclerView.adapter = adapter
+        viewModel.liveData.observe(this) { newsList ->
+            adapter.setNewList(newsList)
+        }
+        viewModel.backgroundColorLiveData.observe(this) { color ->
             binding.main.setBackgroundColor(color)
-        })
+        }
 
         binding.home.setOnClickListener {
             viewModel.setUpNews("home", ContextCompat.getColor(this@MainActivity, R.color.white))
