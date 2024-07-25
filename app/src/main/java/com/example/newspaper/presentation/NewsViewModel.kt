@@ -1,12 +1,14 @@
 package com.example.newspaper.presentation
 
 import android.app.Application
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.newspaper.R
 import com.example.newspaper.domain.newscase.GetNewsListUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class NewsViewModel(
@@ -16,14 +18,24 @@ class NewsViewModel(
     private val _liveData = MutableLiveData<List<RecyclerNews>>()
     private val _error = MutableLiveData<String?>()
     private val _backgroundColorLiveData = MutableLiveData<Int>()
+    private val _loading = MutableLiveData<Boolean>(false)
+    private var networkJob: Job? = null
 
     val liveData: LiveData<List<RecyclerNews>> = _liveData
     val error: LiveData<String?> = _error
+    val loading : LiveData<Boolean> = _loading
     val backgroundColorLiveData: LiveData<Int> = _backgroundColorLiveData
+
+    init {
+        setUpNews(section = "home", color = ContextCompat.getColor(application, R.color.white))
+    }
 
     fun setUpNews (section: String, color: Int) {
         _backgroundColorLiveData.value = color
-        viewModelScope.launch {
+        _error.value = null
+        networkJob?.cancel()
+        networkJob = viewModelScope.launch {
+            _loading.value = true
             val result = getNewsListUseCase.invoke(section)
             if (result.isSuccess) {
                 val list = result.getOrNull()?.map {
@@ -40,6 +52,7 @@ class NewsViewModel(
                     handleError(getApplication<Application>().getString(R.string.empty_news_error))
                 } else {
                     _liveData.value = list
+                    _loading.value = false
                 }
             } else {
                 handleError(result.exceptionOrNull()?.localizedMessage)
@@ -49,5 +62,6 @@ class NewsViewModel(
 
     private fun handleError(error: String?) {
         this._error.value = error ?: getApplication<Application>().getString(R.string.unknown_error)
+        _loading.value = false
     }
 }
