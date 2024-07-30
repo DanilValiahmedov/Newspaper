@@ -27,11 +27,12 @@ class NewsViewModel(
     val backgroundColorLiveData: LiveData<Int> = _backgroundColorLiveData
 
     init {
-        setUpNews(section = "home", color = ContextCompat.getColor(application, R.color.white))
+        choosingSectionNews(SectionNews.HOME)
     }
 
-    fun setUpNews (section: String, color: Int) {
+    private fun setUpNews (section: String, color: Int) {
         _backgroundColorLiveData.value = color
+        _liveData.value = listOf()
         _error.value = null
         networkJob?.cancel()
         networkJob = viewModelScope.launch {
@@ -63,5 +64,15 @@ class NewsViewModel(
     private fun handleError(error: String?) {
         this._error.value = error ?: getApplication<Application>().getString(R.string.unknown_error)
         _loading.value = false
+    }
+
+    fun choosingSectionNews(sectionNews: SectionNews) {
+        when(sectionNews) {
+            SectionNews.HOME -> setUpNews("home", ContextCompat.getColor(getApplication(), R.color.white))
+            SectionNews.WORLD -> setUpNews("world", ContextCompat.getColor(getApplication(), R.color.worldNews))
+            SectionNews.US -> setUpNews("us", ContextCompat.getColor(getApplication(), R.color.usNews))
+            SectionNews.ARTS -> setUpNews("arts", ContextCompat.getColor(getApplication(), R.color.artNews))
+            SectionNews.SCIENCE -> setUpNews("science", ContextCompat.getColor(getApplication(), R.color.scienceNews))
+        }
     }
 }
