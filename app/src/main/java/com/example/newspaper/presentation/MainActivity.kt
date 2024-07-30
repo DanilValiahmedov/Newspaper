@@ -1,11 +1,11 @@
 package com.example.newspaper.presentation
 
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newspaper.R
 import com.example.newspaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -19,8 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView = binding.recycleView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = AdapterNews(this@MainActivity,)
+        val adapter = AdapterNews(this@MainActivity)
         recyclerView.adapter = adapter
+
         val viewModel = ViewModelProvider(this, MainFactory(application)).get(NewsViewModel::class.java)
         viewModel.liveData.observe(this) { newsList ->
             adapter.setNewList(newsList)
@@ -28,25 +29,34 @@ class MainActivity : AppCompatActivity() {
         viewModel.backgroundColorLiveData.observe(this) { color ->
             binding.main.setBackgroundColor(color)
         }
+        val animation: AnimationDrawable? = binding.load.background as? AnimationDrawable
+        viewModel.loading.observe(this) { loading ->
+            if(loading) {
+                animation?.start()
+                binding.load.visibility = View.VISIBLE
+            } else {
+                animation?.stop()
+                binding.load.visibility = View.GONE
+            }
+        }
+        viewModel.error.observe(this) { error ->
+            binding.error.text = error
+        }
 
         binding.home.setOnClickListener {
-            viewModel.setUpNews("home", ContextCompat.getColor(this@MainActivity, R.color.white))
+            viewModel.choosingSectionNews(SectionNews.HOME)
         }
         binding.world.setOnClickListener {
-            viewModel.setUpNews("world", ContextCompat.getColor(this@MainActivity,
-                R.color.worldNews
-            ))
+            viewModel.choosingSectionNews(SectionNews.WORLD)
         }
         binding.us.setOnClickListener {
-            viewModel.setUpNews("us", ContextCompat.getColor(this@MainActivity, R.color.usNews))
+            viewModel.choosingSectionNews(SectionNews.US)
         }
         binding.arts.setOnClickListener {
-            viewModel.setUpNews("arts", ContextCompat.getColor(this@MainActivity, R.color.artNews))
+            viewModel.choosingSectionNews(SectionNews.ARTS)
         }
         binding.science.setOnClickListener {
-            viewModel.setUpNews("science", ContextCompat.getColor(this@MainActivity,
-                R.color.scienceNews
-            ))
+            viewModel.choosingSectionNews(SectionNews.SCIENCE)
         }
 
     }
